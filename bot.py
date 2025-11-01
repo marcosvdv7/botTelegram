@@ -1,45 +1,41 @@
 from telegram import Update  # type: ignore
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes  # type: ignore
-import mysql.connector
+import requests
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 # Comando /Ultimas_Pelis
 async def Ultimas_Pelis(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        conn = mysql.connector.connect(
-            host=os.environ["DB_HOST"],
-            user=os.environ["DB_USER"],
-            password=os.environ["DB_PASS"],
-            database=os.environ["DB_NAME"]
-        )
-        cursor = conn.cursor()
-        cursor.execute("SELECT nombre FROM pelis ORDER BY id DESC LIMIT 10;")
-        titulos = cursor.fetchall()
-        conn.close()
-        mensaje = "👋 Hola! Aquí tienes las últimas 10 películas añadidas:\n" + "\n".join(f"• {n[0]}" for n in titulos)
+        response = requests.get("https://tusitio.infinityfreeapp.com/bot.php")
+        titulos = response.json()
+        mensaje = "👋 Hola! Aquí tienes las últimas 10 películas añadidas:\n" + "\n".join(f"• {n}" for n in titulos)
     except Exception as e:
-        mensaje = f"⚠️ Error al conectar con la base de datos:\n{e}"
+        mensaje = f"⚠️ Error al obtener las películas:\n{e}"
     await update.message.reply_text(mensaje)
 
 # Comando /hola
 async def hola(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mensaje = (
-        "📼 Bienvenido a *TheCineVerse_bot* 🎥\n"
-        "Aquí puedes explorar películas, géneros y comandos temáticos.\n\n"
-        "🕹️ Prueba comandos como:\n"
-        "• /Ultimas_Pelis\n"
-        "• /anime\n"
-        "• /navidad\n"
-        "• /retro\n\n"
+        "📼 Bienvenido a *TheCineVerse\\_bot* 🎥\\n"
+        "Aquí puedes explorar películas, géneros y comandos temáticos.\\n\\n"
+        "🕹️ Prueba comandos como:\\n"
+        "• /Ultimas\\_Pelis\\n"
+        "• /anime\\n"
+        "• /navidad\\n"
+        "• /retro\\n\\n"
         "✨ ¡Luces, cámara... interacción!"
     )
-    await update.message.reply_markdown(mensaje)
+    await update.message.reply_markdown_v2(mensaje)
 
 # Configuración del bot
 if __name__ == '__main__':
-    TOKEN = os.environ.get("BOT_TOKEN")
+    TOKEN = os.getenv("BOT_TOKEN")
     if not TOKEN:
-        raise ValueError("❌ BOT_TOKEN no está definido en las variables de entorno.")
+        raise ValueError("❌ BOT_TOKEN no está definido en el archivo .env")
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.add_handler(CommandHandler("hola", hola))
