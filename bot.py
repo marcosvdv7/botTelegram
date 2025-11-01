@@ -3,24 +3,22 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes  # typ
 import mysql.connector
 import os
 
-# Conexión con la base de datos
-def obtener_pelis():
-    conn = mysql.connector.connect(
-        host=os.environ["DB_HOST"],
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASS"],
-        database=os.environ["DB_NAME"]
-    )
-    cursor = conn.cursor()
-    cursor.execute("SELECT nombre FROM pelis ORDER BY id DESC LIMIT 10;")
-    titulos = cursor.fetchall()
-    conn.close()
-    return [n[0] for n in titulos]
-
 # Comando /Ultimas_Pelis
 async def Ultimas_Pelis(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    titulos = obtener_pelis()
-    mensaje = "👋 Hola! Aquí tienes las últimas 10 películas añadidas:\n" + "\n".join(f"• {n}" for n in titulos)
+    try:
+        conn = mysql.connector.connect(
+            host=os.environ["DB_HOST"],
+            user=os.environ["DB_USER"],
+            password=os.environ["DB_PASS"],
+            database=os.environ["DB_NAME"]
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT nombre FROM pelis ORDER BY id DESC LIMIT 10;")
+        titulos = cursor.fetchall()
+        conn.close()
+        mensaje = "👋 Hola! Aquí tienes las últimas 10 películas añadidas:\n" + "\n".join(f"• {n[0]}" for n in titulos)
+    except Exception as e:
+        mensaje = f"⚠️ Error al conectar con la base de datos:\n{e}"
     await update.message.reply_text(mensaje)
 
 # Comando /hola
@@ -39,7 +37,9 @@ async def hola(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Configuración del bot
 if __name__ == '__main__':
-    TOKEN = os.environ["BOT_TOKEN"]
+    TOKEN = os.environ.get("BOT_TOKEN")
+    if not TOKEN:
+        raise ValueError("❌ BOT_TOKEN no está definido en las variables de entorno.")
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.add_handler(CommandHandler("hola", hola))
