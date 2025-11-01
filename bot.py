@@ -10,7 +10,7 @@ load_dotenv()
 # Comando /Ultimas_Pelis
 async def Ultimas_Pelis(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        response = requests.get("https://tusitio.infinityfreeapp.com/bot.php")
+        response = requests.get("https://if0_39471841.infinityfreeapp.com/bot.php")
         titulos = response.json()
         mensaje = "👋 Hola! Aquí tienes las últimas 10 películas añadidas:\n" + "\n".join(f"• {n}" for n in titulos)
     except Exception as e:
@@ -40,3 +40,4 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.add_handler(CommandHandler("hola", hola))
     app.run_polling()
+
