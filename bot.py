@@ -26,7 +26,8 @@ async def Ultimas_Pelis(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Configuración del bot
 if __name__ == '__main__':
-    app = ApplicationBuilder().token("8174851010:AAHEpX8o6vS1cuaiUj15g2XLvqnlXbfaLIA").build()
+    app = ApplicationBuilder().token("BOT_TOKEN").build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.run_polling()
+
 
