@@ -29,6 +29,20 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token("BOT_TOKEN").build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.run_polling()
+# Comando /hola
+async def hola(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mensaje = (
+        "📼 Bienvenido a *TheCineVerse_bot* 🎥\n"
+        "Aquí puedes explorar películas, géneros y comandos temáticos.\n\n"
+        "🕹️ Prueba comandos como:\n"
+        "• /Ultimas_Pelis\n"
+        "• /anime\n"
+        "• /navidad\n"
+        "• /retro\n\n"
+        "✨ ¡Luces, cámara... interacción!"
+    )
+    await update.message.reply_markdown(mensaje)
+
 
 
 
