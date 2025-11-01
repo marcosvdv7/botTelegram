@@ -4,11 +4,13 @@ import mysql.connector
 
 # Conexión con la base de datos
 def obtener_pelis():
+    import os
     conn = mysql.connector.connect(
-        host="sql312.infinityfree.com",       # Host de InfinityFree
-        user="if0_39471841",                  # Usuario de InfinityFree
-        password="CEfSXinYJOQY",              # Contraseña
-        database="if0_39471841_usuarios"      # Nombre de la base de datos
+    host=os.environ["DB_HOST"],
+    user=os.environ["DB_USER"],
+    password=os.environ["DB_PASS"],
+    database=os.environ["DB_NAME"]
+
     )
     cursor = conn.cursor()
     cursor.execute("SELECT nombre FROM pelis ORDER BY id DESC LIMIT 10;")
@@ -27,3 +29,4 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token("8174851010:AAHEpX8o6vS1cuaiUj15g2XLvqnlXbfaLIA").build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.run_polling()
+
