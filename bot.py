@@ -1,7 +1,7 @@
 from telegram import Update  # type: ignore
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes  # type: ignore
 import mysql.connector
-
+import os
 # Conexión con la base de datos
 def obtener_pelis():
     import os
@@ -29,5 +29,8 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token("BOT_TOKEN").build()
     app.add_handler(CommandHandler("Ultimas_Pelis", Ultimas_Pelis))
     app.run_polling()
+
+
+
 
 
